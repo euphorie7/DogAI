@@ -11,4 +11,14 @@ def chunk_documents(
 
     for document in documents : 
 
-        
+        start = 0 
+
+        while start < len(documents):
+            end = start + chunk_size
+
+            chunk = document[start:end]
+            chunks.append(chunk)
+
+            start+= chunk_size - overlap
+    
+    return chunks
