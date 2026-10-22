@@ -1,28 +1,53 @@
-from ingestion.loader import load_documents
-from ingestion.chunker import chunk_documents
-from embeddings.embedder import generate_embeddings
+from src.retrieval.retrieval import retrieve_documents
+from src.generation.generation import generate_answer
+
+def main():
+
+    print("Welcome to DogAI!")
+
+    while True:
+        # 1. User question
+        question = input("\nAsk a question (or 'exit' to quit): ").strip()
+
+        if question.lower() == "exit":
+            print("Goodbye!")
+            break
+
+        if not question:
+            continue
+
+        # 2. Semantic retrieval
+        results = retrieve_documents(
+            question=question,
+            top_k=2
+        )
+
+        # 3. Extract relevant documents
+        documents = results["documents"][0]
+
+        if not documents:
+            print("No relevant documents found.")
+            continue
+
+        # 3. LLM Generation
+        answer = generate_answer(question, documents)
+
+        print(f"\nDogAI: {answer}")
+
+        # # 3. Display retrieved documents
+        # print("\n--- Retrieved Documents ---")
+
+        # for index, (document, distance) in enumerate(
+        #     zip(
+        #         results["documents"][0],
+        #         results["distances"][0]
+        #     ),
+        #     start=1
+        # ):
+        #     print(f"\nDocument {index}")
+        #     print(f"Distance: {distance:.4f}")
+        #     print(f"Content: {document}")
 
 
-def main() : 
-
-    # 1. Load documents
-    documents = load_documents("data/dogs.txt")
-
-    # 2. Chunking
-    chunks = chunk_documents(
-        documents,
-        chunk_size=500,
-        overlap=100
-    )
-
-    # 3. Generate embeddings
-    embeddings = generate_embeddings(chunks)
-
-
-    # 4. Store embeddings
-    store_embeddings(chunks, embeddings)
-
-    print(f"Documents separeted with --*--: {len(documents)}")
-    print(f"Chunks: {len(chunks)}")
-    print(f"Embeddings: {embeddings.shape}")
-
+if __name__ == "__main__":
+    main()

@@ -2,7 +2,7 @@ from pathlib import Path
  
 
 
-def load_documents(file_path :str) -> list[str]
+def load_documents(file_path :str) -> list[str]:
 
     text = Path(file_path).read_text(encoding="utf-8")
 
